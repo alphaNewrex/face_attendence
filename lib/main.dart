@@ -1,6 +1,7 @@
 import 'package:face_attendence/screens/add_class.dart';
 import 'package:face_attendence/screens/add_student.dart';
 import 'package:face_attendence/screens/class_page.dart';
+import 'package:face_attendence/screens/edit_student.dart';
 import 'package:face_attendence/screens/home_page.dart';
 import 'package:face_attendence/screens/login_page.dart';
 import 'package:face_attendence/screens/take_attendance.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/student': (context) => AddStudentPage(),
         '/attend': (context) => AttendancePage(),
         '/addClass': (context) => AddClassPage(),
+        '/editStud': (context) => EditStudent(),
       },
     );
   }

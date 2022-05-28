@@ -29,7 +29,7 @@ class _AddClassPageState extends State<AddClassPage> {
     });
 
     var endpoint = Uri.parse(
-        "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${cName}");
+        "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${cName.toString().toLowerCase()}");
     var uuid = await FirebaseAuth.instance.currentUser!.uid;
     // ignore: unnecessary_cast
     Map<String, dynamic> data = {
@@ -101,6 +101,7 @@ class _AddClassPageState extends State<AddClassPage> {
                     onChanged: (value) => cName = value,
                     autofocus: true,
                     decoration: InputDecoration(
+                        labelText: 'Class Name - ',
                         border: OutlineInputBorder(),
                         hintText: 'Class Name/Code'),
                   ),
@@ -111,7 +112,9 @@ class _AddClassPageState extends State<AddClassPage> {
                     onChanged: (value) => taughtBy = value,
                     autofocus: true,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'Taught by'),
+                        labelText: 'Taught By -',
+                        border: OutlineInputBorder(),
+                        hintText: 'Taught by'),
                   ),
                   SizedBox(
                     height: 20,

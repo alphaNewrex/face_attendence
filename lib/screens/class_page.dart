@@ -1,7 +1,9 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import '../models/classes.dart';
 
@@ -73,7 +75,6 @@ class _ClassPageState extends State<ClassPage> {
                 const Spacer(),
               ],
             ),
-            
             Divider(
               thickness: 1,
             ),
@@ -91,51 +92,94 @@ class _ClassPageState extends State<ClassPage> {
                   if (snapshot.hasData) {
                     return ListView(
                       children: snapshot.data!.docs.map((e) {
-                        return Stack(
-                          children: [
-                            Container(
-                              height: 40,
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.transparent,
-                              ),
-                              child: Ink(
+                        return Container(
+                          margin: EdgeInsets.all(8),
+                          width: MediaQuery.of(context).size.width * 0.96,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  offset: Offset(1, 2)),
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 50,
+                                margin: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white24,
+                                  color: Colors.transparent,
                                 ),
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  margin: const EdgeInsets.all(8),
+                                child: Ink(
                                   decoration: BoxDecoration(
-                                    image: const DecorationImage(
-                                      image: AssetImage('assets/user.jpg'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.circular(25),
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white24,
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(e['name']),
-                                Spacer(),
-                                Text(e['attendance']),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                              ],
-                            )
-                          ],
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    margin: const EdgeInsets.all(8),
+                                    // child: e['image'] == 'null'
+                                    //     ? Image(
+                                    //         image:
+                                    //             AssetImage('assets/dummy.jpg'),
+                                    //         fit: BoxFit.contain,
+                                    //       )
+                                    //     :
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          e['image'] as String,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        e['name'].toString().trim(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        e['id'].toString().trim(),
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Text(e['attendance']),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         );
                       }).toList(),
                     );

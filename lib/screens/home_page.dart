@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                                   alignment: FractionalOffset(1, 0),
                                   margin: EdgeInsets.only(
                                     top: 15,
-                                    right: 15,
+                                    right: 5,
                                   ),
                                   child: IconButton(
                                       onPressed: () async {
@@ -162,7 +162,10 @@ class _HomePageState extends State<HomePage> {
                                       )),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(top: 25, left: 15),
+                                  margin: EdgeInsets.only(
+                                    top: 25,
+                                    left: 15,
+                                  ),
                                   width: 220,
                                   child: Text(
                                     document['name'].toString().toUpperCase(),

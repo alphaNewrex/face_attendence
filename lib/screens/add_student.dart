@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'dart:ui';
 
@@ -10,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import '../models/classes.dart';
 import 'add_class.dart';
@@ -22,102 +24,13 @@ class AddStudentPage extends StatefulWidget {
 }
 
 var personID;
-bool _isloading = false;
-Future addStudent(Classes? doc, BuildContext context) async {
-  _isloading = true;
-  var endpoint = Uri.parse(
-      "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${doc!.name.toLowerCase()}/persons");
-  Map data = {
-    "name": sName,
-  };
-  var body = jsonEncode(data);
-
-  var response = await http.post(endpoint,
-      headers: {
-        "Content-Type": "application/json",
-        "Ocp-Apim-Subscription-Key": key,
-      },
-      body: body);
-
-  if (response.statusCode == 200) {
-    var res = jsonDecode(response.body);
-    personID = res['personId'];
-    print(personID);
-
-    Map<String, dynamic> student = {
-      "name": sName,
-      "attendance": sAttend,
-    };
-
-    var uri = Uri.parse(
-        "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${doc.name}/persons/${personID}/persistedFaces?detectionModel=detection_03");
-
-    File file = File(singleRegisterImage!.path);
-    final bytes = file.readAsBytesSync();
-    print(bytes);
-
-    var response2 = await http.post(uri,
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "Ocp-Apim-Subscription-Key": key,
-        },
-        body: bytes);
-
-    if (response2.statusCode == 200) {
-      print('Check');
-      var da = jsonDecode(response2.body);
-      print(da['persistedFaceId']);
-
-      var uri2 = Uri.parse(
-          "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${doc.name}/train");
-
-      var responseTrain = await http.post(uri2, headers: {
-        "Ocp-Apim-Subscription-Key": key,
-      });
-
-      if (responseTrain.statusCode == 202) {
-        await FirebaseFirestore.instance
-            .collection('Courses')
-            .doc(doc.id)
-            .collection('students')
-            .doc(personID)
-            .set(student);
-        print('added databse');
-        print("Train Successful");
-        singleRegisterImage = null;
-      } else {
-        print(responseTrain.statusCode);
-        var res = jsonDecode(responseTrain.body);
-        print(res);
-        Fluttertoast.showToast(
-            msg: res['error']['message'],
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            fontSize: 16.0);
-      }
-    } else {
-      print(response2.statusCode);
-      var res = jsonDecode(response2.body);
-      Fluttertoast.showToast(
-          msg: res['error']['message'],
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 16.0);
-      print(res);
-    }
-  } else {
-    print('error 2');
-    var res = jsonDecode(response.body);
-    print(res);
-  }
-}
-
+bool isloading = false;
+late String sName, sAttend, sId, sImage;
 XFile? singleRegisterImage;
 
 class _AddStudentPageState extends State<AddStudentPage> {
   @override
   Widget build(BuildContext context) {
-    
     Classes? doc = ModalRoute.of(context)!.settings.arguments as Classes?;
     return Scaffold(
       appBar: AppBar(title: Text('Add Student')),
@@ -189,30 +102,145 @@ class _AddStudentPageState extends State<AddStudentPage> {
                     : const SizedBox.shrink()
               ],
             ),
-            _isloading
-                ? Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : Container()
+            // _isloading
+            //     ? Container(
+            //         color: Colors.black.withOpacity(0.5),
+            //         child: Center(
+            //           child: CircularProgressIndicator(),
+            //         ),
+            //       )
+            //     : Container()
           ],
         ),
       ),
     );
   }
+
+  Future<XFile?> imageGallery() async {
+    return await ImagePicker().pickImage(source: ImageSource.gallery);
+  }
+
+  Future<XFile?> imageCamera() async {
+    return await ImagePicker().pickImage(source: ImageSource.camera);
+  }
 }
 
-Future<XFile?> imageGallery() async {
-  return await ImagePicker().pickImage(source: ImageSource.gallery);
+Future<String> uploadPic() async {
+  Random _random = Random();
+  int num = _random.nextInt(99999);
+
+  File file = File(singleRegisterImage!.path);
+  try {
+    await firebase_storage.FirebaseStorage.instance
+        .ref('uploads')
+        .child(num.toString() + ".png")
+        .putFile(file);
+  } on FirebaseException catch (e) {
+    print(e);
+  }
+
+  String url = await firebase_storage.FirebaseStorage.instance
+      .ref('uploads')
+      .child(num.toString() + ".png")
+      .getDownloadURL();
+
+  return url;
 }
 
-Future<XFile?> imageCamera() async {
-  return await ImagePicker().pickImage(source: ImageSource.camera);
-}
+Future addStudent(Classes? doc, BuildContext context) async {
+  isloading = true;
+  var endpoint = Uri.parse(
+      "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${doc!.name.toLowerCase()}/persons");
+  Map data = {
+    "name": sName,
+  };
+  var body = jsonEncode(data);
 
-late String sName, sAttend;
+  var response = await http.post(endpoint,
+      headers: {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": key,
+      },
+      body: body);
+
+  if (response.statusCode == 200) {
+    var res = jsonDecode(response.body);
+    personID = res['personId'];
+    print(personID);
+
+    var uri = Uri.parse(
+        "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${doc.name.toLowerCase()}/persons/${personID}/persistedFaces?detectionModel=detection_03");
+
+    File file = File(singleRegisterImage!.path);
+    final bytes = file.readAsBytesSync();
+    print(bytes);
+
+    var response2 = await http.post(uri,
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "Ocp-Apim-Subscription-Key": key,
+        },
+        body: bytes);
+
+    if (response2.statusCode == 200) {
+      print('Check');
+      var da = jsonDecode(response2.body);
+      print(da['persistedFaceId']);
+
+      var uri2 = Uri.parse(
+          "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${doc.name.toLowerCase()}/train");
+
+      var responseTrain = await http.post(uri2, headers: {
+        "Ocp-Apim-Subscription-Key": key,
+      });
+
+      if (responseTrain.statusCode == 202) {
+        sImage = await uploadPic();
+
+        Map<String, dynamic> student = {
+          "name": sName,
+          "attendance": sAttend,
+          "id": sId,
+          "image": sImage,
+        };
+
+        await FirebaseFirestore.instance
+            .collection('Courses')
+            .doc(doc.id)
+            .collection('students')
+            .doc(personID)
+            .set(student);
+        print('added databse');
+        print("Train Successful");
+
+        singleRegisterImage = null;
+      } else {
+        print(responseTrain.statusCode);
+        var res = jsonDecode(responseTrain.body);
+        print(res);
+        Fluttertoast.showToast(
+            msg: res['error']['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            fontSize: 16.0);
+      }
+    } else {
+      print(response2.statusCode);
+      var res = jsonDecode(response2.body);
+      Fluttertoast.showToast(
+          msg: res['error']['message'],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 16.0);
+      print(res);
+    }
+  } else {
+    print('error 2');
+    var res = jsonDecode(response.body);
+    print(res);
+  }
+  isloading = false;
+}
 
 class DetailsWidget extends StatefulWidget {
   final Classes? doc;
@@ -229,18 +257,29 @@ class _DetailsWidgetState extends State<DetailsWidget> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          TextField(
+          TextFormField(
             onChanged: (value) => sName = value,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
+              labelText: 'Name',
               hintText: 'Enter full name',
             ),
           ),
           SizedBox(height: 10),
-          TextField(
+          TextFormField(
+            onChanged: (value) => sId = value,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Registration No.',
+              hintText: 'Enter Registration Number',
+            ),
+          ),
+          SizedBox(height: 10),
+          TextFormField(
             onChanged: (value) => sAttend = value,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
+              labelText: 'Attendance',
               hintText: 'Days already attended',
             ),
           ),
@@ -250,18 +289,25 @@ class _DetailsWidgetState extends State<DetailsWidget> {
           ElevatedButton.icon(
             onPressed: () async {
               setState(() {
-                _isloading = true;
-                print(_isloading);
+                isloading = true;
               });
               await addStudent(widget.doc, context);
               setState(() {
-                _isloading = false;
-                print(_isloading);
+                isloading = false;
               });
               Navigator.pop(context);
             },
-            icon: Icon(Icons.add),
-            label: Text('Add Student'),
+            icon: isloading
+                ? SizedBox(
+                    height: 10,
+                    width: 10,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Icon(Icons.add),
+            label: isloading ? Text('Updating..') : Text('Add Student'),
           )
         ],
       ),
