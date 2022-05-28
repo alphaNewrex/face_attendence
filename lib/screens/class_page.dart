@@ -2,8 +2,8 @@
 
 import 'dart:io';
 
-import 'package:android_external_storage/android_external_storage.dart';
 import 'package:csv/csv.dart';
+import 'package:external_path/external_path.dart';
 import 'package:face_attendence/models/student.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,20 +31,40 @@ class _ClassPageState extends State<ClassPage> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
+
+      var snapshot = await FirebaseFirestore.instance
+          .collection('Courses')
+          .doc(doc!.id)
+          .collection('students')
+          .get()
+          .then(
+        (value) {
+          value.docs.forEach((element) {
+            final data = element.data() as Map<String, dynamic>;
+            List<dynamic> student = [
+              data['id'],
+              data['name'],
+              data['attendance'],
+            ];
+            rows.add(student);
+            print(data);
+          });
+        },
+      );
+
       print(rows);
       String csv = const ListToCsvConverter().convert(rows);
-      String? dir =
-          await AndroidExternalStorage.getExternalStoragePublicDirectory(
-              DirType.downloadDirectory);
+      String? dir = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
       print("dir $dir");
       String file = "$dir";
 
-      File f = File(file + "/${doc!.name}.csv");
+      File f = File(file + "/${doc.name}.csv");
 
       f.writeAsString(csv);
       final snackBar = SnackBar(
         content: const Text('Export Completed'),
-        backgroundColor: (Colors.black12),
+        backgroundColor: (Colors.black),
         action: SnackBarAction(
           label: 'Open',
           onPressed: () {
@@ -53,6 +73,9 @@ class _ClassPageState extends State<ClassPage> {
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      rows = [
+        ["Registation No.", "Name", "Attendance"]
+      ];
 
       print('Export Completed');
     }
@@ -131,12 +154,6 @@ class _ClassPageState extends State<ClassPage> {
                   if (snapshot.hasData) {
                     return ListView(
                       children: snapshot.data!.docs.map((e) {
-                        List<dynamic> student = [
-                          e['id'],
-                          e['name'],
-                          e['attendance'],
-                        ];
-                        rows.add(student);
                         return GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(

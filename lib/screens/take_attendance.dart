@@ -19,8 +19,9 @@ class AttendancePage extends StatefulWidget {
   State<AttendancePage> createState() => _AttendancePageState();
 }
 
-Future markAttendace(Classes? doc) async {
+Future markAttendace(Classes? doc, context) async {
   var list = [];
+  var dialogList = [];
   var endpoint = Uri.parse(
       "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/detect");
 
@@ -77,11 +78,13 @@ Future markAttendace(Classes? doc) async {
               .collection('Courses')
               .doc(doc.id)
               .collection('students')
-              .doc(personID)
+              .doc(rpersonId)
               .get();
+          print(rpersonId);
 
           var oldattN =
-              (int.parse(oldatt['attendance'].toString()) + 1).toString();
+              await (int.parse(oldatt['attendance'].toString()) + 1).toString();
+          dialogList.add({"name": oldatt['name'], "image": oldatt['image']});
 
           await FirebaseFirestore.instance
               .collection('Courses')
@@ -91,6 +94,73 @@ Future markAttendace(Classes? doc) async {
               .update({'attendance': oldattN});
         }
       }
+
+      // await showDialog(
+      //     context: context,
+      //     builder: (BuildContext dContext) {
+      //       return SimpleDialog(
+
+      //         title: Text('Face Detected'),
+      //         children: [
+      //           ListView.builder(
+      //             itemCount: dialogList.length,
+      //             itemBuilder: (context, index) {
+      //               return Container(
+      //                 margin: EdgeInsets.all(8),
+      //                 height: 40,
+      //                 child: Row(
+      //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                   children: [
+      //                     Row(
+      //                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //                       children: [
+      //                         Container(
+      //                           height: 35,
+      //                           width: 35,
+      //                           margin: const EdgeInsets.all(8),
+      //                           decoration: BoxDecoration(
+      //                             borderRadius: BorderRadius.circular(25),
+      //                             image: DecorationImage(
+      //                               image: NetworkImage(
+      //                                 dialogList[index]['image'] as String,
+      //                               ),
+      //                               fit: BoxFit.cover,
+      //                             ),
+      //                           ),
+      //                         ),
+      //                         Text(
+      //                           dialogList[index]['name'].toString().trim(),
+      //                           style: TextStyle(
+      //                             fontSize: 16,
+      //                           ),
+      //                         ),
+      //                       ],
+      //                     ),
+      //                     Text(
+      //                       'PRESENT',
+      //                       style: TextStyle(
+      //                         fontSize: 16,
+      //                         color: Colors.green,
+      //                       ),
+      //                     ),
+      //                   ],
+      //                 ),
+      //               );
+      //             },
+      //           ),
+      //           ElevatedButton(
+      //               onPressed: () {
+      //                 Navigator.pop(dContext);
+      //               },
+      //               child: Text(
+      //                 'Close',
+      //                 style: TextStyle(
+      //                   color: Colors.red,
+      //                 ),
+      //               )),
+      //         ],
+      //       );
+      //     });
     } else {
       var res = jsonDecode(response2.body);
       print(res);
@@ -177,7 +247,7 @@ class _AttendancePageState extends State<AttendancePage> {
                       setState(() {
                         isloading = true;
                       });
-                      await markAttendace(doc);
+                      await markAttendace(doc, context);
                       setState(() {
                         isloading = false;
                       });
