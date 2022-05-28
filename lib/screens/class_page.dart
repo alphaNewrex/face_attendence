@@ -1,9 +1,15 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
+import 'dart:io';
+
+import 'package:android_external_storage/android_external_storage.dart';
+import 'package:csv/csv.dart';
+import 'package:face_attendence/models/student.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../models/classes.dart';
 
@@ -18,6 +24,39 @@ class _ClassPageState extends State<ClassPage> {
   @override
   Widget build(BuildContext context) {
     Classes? doc = ModalRoute.of(context)!.settings.arguments as Classes?;
+    List<List<dynamic>> rows = [
+      ["Registation No.", "Name", "Attendance"]
+    ];
+    Future exportCSV() async {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.storage,
+      ].request();
+      print(rows);
+      String csv = const ListToCsvConverter().convert(rows);
+      String? dir =
+          await AndroidExternalStorage.getExternalStoragePublicDirectory(
+              DirType.downloadDirectory);
+      print("dir $dir");
+      String file = "$dir";
+
+      File f = File(file + "/${doc!.name}.csv");
+
+      f.writeAsString(csv);
+      final snackBar = SnackBar(
+        content: const Text('Export Completed'),
+        backgroundColor: (Colors.black12),
+        action: SnackBarAction(
+          label: 'Open',
+          onPressed: () {
+            OpenFile.open(f.path);
+          },
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      print('Export Completed');
+    }
+
     var studentStream = FirebaseFirestore.instance
         .collection('Courses')
         .doc(doc!.id)
@@ -79,12 +118,12 @@ class _ClassPageState extends State<ClassPage> {
               thickness: 1,
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.75,
               child: StreamBuilder(
                 stream: studentStream,
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (!snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
@@ -92,93 +131,117 @@ class _ClassPageState extends State<ClassPage> {
                   if (snapshot.hasData) {
                     return ListView(
                       children: snapshot.data!.docs.map((e) {
-                        return Container(
-                          margin: EdgeInsets.all(8),
-                          width: MediaQuery.of(context).size.width * 0.96,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 4,
-                                  offset: Offset(1, 2)),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: 50,
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.transparent,
-                                ),
-                                child: Ink(
+                        List<dynamic> student = [
+                          e['id'],
+                          e['name'],
+                          e['attendance'],
+                        ];
+                        rows.add(student);
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/editStud',
+                              arguments: Student(
+                                name: e['name'],
+                                id: e['id'],
+                                image: e['image'],
+                                attend: e['attendance'],
+                                parentId: doc.id,
+                                pId: e.id,
+                                cName: doc.name,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.all(8),
+                            width: MediaQuery.of(context).size.width * 0.96,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(1, 2)),
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height: 50,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white24,
+                                    color: Colors.transparent,
                                   ),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    width: 50,
-                                    margin: const EdgeInsets.all(8),
-                                    // child: e['image'] == 'null'
-                                    //     ? Image(
-                                    //         image:
-                                    //             AssetImage('assets/dummy.jpg'),
-                                    //         fit: BoxFit.contain,
-                                    //       )
-                                    //     :
+                                  child: Ink(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(25),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                          e['image'] as String,
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white24,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        e['name'].toString().trim(),
-                                        style: TextStyle(
-                                          fontSize: 16,
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Container(
+                                      height: 50,
+                                      width: 50,
+                                      margin: const EdgeInsets.all(8),
+                                      // child: e['image'] == 'null'
+                                      //     ? Image(
+                                      //         image:
+                                      //             AssetImage('assets/dummy.jpg'),
+                                      //         fit: BoxFit.contain,
+                                      //       )
+                                      //     :
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(25),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            e['image'] as String,
+                                          ),
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        e['id'].toString().trim(),
-                                        style: TextStyle(
-                                          color: Colors.black54,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          e['name'].toString().trim(),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  Text(e['attendance']),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                ],
-                              )
-                            ],
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          e['id'].toString().trim(),
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Spacer(),
+                                    Text(e['attendance']),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         );
                       }).toList(),
@@ -199,6 +262,13 @@ class _ClassPageState extends State<ClassPage> {
             )
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          exportCSV();
+        },
+        label: Text('Export'),
+        icon: Icon(Icons.import_export_outlined),
       ),
     );
   }

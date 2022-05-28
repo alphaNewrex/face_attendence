@@ -32,13 +32,11 @@ List imageList = [
   AssetImage("assets/banner8.jpg"),
   AssetImage("assets/banner9.jpg"),
   AssetImage("assets/banner10.jpg"),
-  AssetImage("assets/banner11.jpg"),
-  AssetImage("assets/banner12.jpg"),
 ];
 
 Future deleteClass(String name) async {
   var endpoint = Uri.parse(
-      "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/$name");
+      "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/${name.toLowerCase()}");
 
   // ignore: unnecessary_cast
 
@@ -120,7 +118,8 @@ class _HomePageState extends State<HomePage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       image: DecorationImage(
-                                        image: imageList[Random().nextInt(11)],
+                                        image: imageList[int.parse(
+                                            document['no'].toString())],
                                         fit: BoxFit.cover,
                                       ),
                                     ),

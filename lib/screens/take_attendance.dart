@@ -46,7 +46,7 @@ Future markAttendace(Classes? doc) async {
 
     Map data = {
       "faceIds": list,
-      "largePersonGroupId": doc!.name,
+      "largePersonGroupId": doc!.name.toLowerCase(),
       "maxNumOfCandidatesReturned": 1,
       "confidenceThreshold": 0.5,
     };
@@ -89,7 +89,6 @@ Future markAttendace(Classes? doc) async {
               .collection('students')
               .doc(rpersonId)
               .update({'attendance': oldattN});
-          singleImage = null;
         }
       }
     } else {
@@ -100,9 +99,11 @@ Future markAttendace(Classes? doc) async {
     var res = jsonDecode(response.body);
     print(res);
   }
+  singleImage = null;
 }
 
 XFile? singleImage;
+bool isloading = false;
 
 class _AttendancePageState extends State<AttendancePage> {
   @override
@@ -171,12 +172,30 @@ class _AttendancePageState extends State<AttendancePage> {
               height: 20,
             ),
             singleImage != null && singleImage!.path.isNotEmpty
-                ? ElevatedButton(
+                ? ElevatedButton.icon(
                     onPressed: () async {
+                      setState(() {
+                        isloading = true;
+                      });
                       await markAttendace(doc);
+                      setState(() {
+                        isloading = false;
+                      });
                       Navigator.pop(context);
                     },
-                    child: const Text('Mark Attendance'))
+                    icon: isloading
+                        ? const SizedBox(
+                            height: 10,
+                            width: 10,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Icon(Icons.add),
+                    label: isloading
+                        ? const Text('Making...')
+                        : const Text('Mark Attendance'))
                 : const SizedBox.shrink(),
           ],
         ),

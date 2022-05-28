@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,6 +39,7 @@ class _AddClassPageState extends State<AddClassPage> {
       "sem": semester,
       "t_by": taughtBy,
       "uuid": uuid,
+      "no": Random().nextInt(10),
     };
     Map data_json = {
       "name": cName,
