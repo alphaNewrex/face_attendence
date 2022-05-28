@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:face_attendence/models/classes.dart';
@@ -8,6 +9,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+
+import 'add_class.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -30,6 +35,33 @@ List imageList = [
   AssetImage("assets/banner11.jpg"),
   AssetImage("assets/banner12.jpg"),
 ];
+
+Future deleteClass(String name) async {
+  var endpoint = Uri.parse(
+      "https://faceattendance69.cognitiveservices.azure.com/face/v1.0/largepersongroups/$name");
+
+  // ignore: unnecessary_cast
+
+  var response = await http.delete(
+    endpoint,
+    headers: {
+      "Ocp-Apim-Subscription-Key": key,
+    },
+  );
+
+  if (response.statusCode != 200) {
+    print(response.body);
+    var err = jsonDecode(response.body);
+
+    Fluttertoast.showToast(
+        msg: err['error']['message'],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: 16.0);
+  }
+  print('Class deleted');
+}
+
 var uuid = FirebaseAuth.instance.currentUser!.uid;
 
 class _HomePageState extends State<HomePage> {
@@ -109,6 +141,25 @@ class _HomePageState extends State<HomePage> {
                                       },
                                     ),
                                   ),
+                                ),
+                                Container(
+                                  alignment: FractionalOffset(1, 0),
+                                  margin: EdgeInsets.only(
+                                    top: 15,
+                                    right: 15,
+                                  ),
+                                  child: IconButton(
+                                      onPressed: () async {
+                                        await firestore
+                                            .collection('Courses')
+                                            .doc(document.id)
+                                            .delete();
+                                        await deleteClass(document['name']);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      )),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(top: 25, left: 15),

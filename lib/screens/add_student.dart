@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -83,15 +84,25 @@ Future addStudent(Classes? doc, BuildContext context) async {
             .set(student);
         print('added databse');
         print("Train Successful");
+        singleRegisterImage = null;
       } else {
         print(responseTrain.statusCode);
         var res = jsonDecode(responseTrain.body);
         print(res);
+        Fluttertoast.showToast(
+            msg: res['error']['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            fontSize: 16.0);
       }
     } else {
       print(response2.statusCode);
       var res = jsonDecode(response2.body);
-
+      Fluttertoast.showToast(
+          msg: res['error']['message'],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 16.0);
       print(res);
     }
   } else {
@@ -106,6 +117,7 @@ XFile? singleRegisterImage;
 class _AddStudentPageState extends State<AddStudentPage> {
   @override
   Widget build(BuildContext context) {
+    
     Classes? doc = ModalRoute.of(context)!.settings.arguments as Classes?;
     return Scaffold(
       appBar: AppBar(title: Text('Add Student')),

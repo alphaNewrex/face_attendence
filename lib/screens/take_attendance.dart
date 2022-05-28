@@ -80,12 +80,16 @@ Future markAttendace(Classes? doc) async {
               .doc(personID)
               .get();
 
+          var oldattN =
+              (int.parse(oldatt['attendance'].toString()) + 1).toString();
+
           await FirebaseFirestore.instance
               .collection('Courses')
               .doc(doc.id)
               .collection('students')
               .doc(rpersonId)
-              .update({'attendance': '1'});
+              .update({'attendance': oldattN});
+          singleImage = null;
         }
       }
     } else {
@@ -103,7 +107,6 @@ XFile? singleImage;
 class _AttendancePageState extends State<AttendancePage> {
   @override
   Widget build(BuildContext context) {
-    singleImage = null;
     Classes? doc = ModalRoute.of(context)!.settings.arguments as Classes?;
     return Scaffold(
       appBar: AppBar(
