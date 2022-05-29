@@ -28,7 +28,7 @@ P.S. This project was built entirely during the Microsoft Engage'22 Program Time
  
  Project Presentation : [Presentation Link]()
 
-## 🚩 Features and UI: 
+## 🚩 Features | UI and How to Use: 
 Features | UI
 ------------ | -------------
 Sign In Screen Powered by Firebase Authentication | ![Screenshot 2022-05-29 155317](https://user-images.githubusercontent.com/77982973/170863297-5445373b-ea66-461c-a086-7cb6d394210d.png)
