@@ -1,6 +1,6 @@
 # Microsoft Engage'22
 ## Final Project - Face Attendance
-### 🚩Problem Statement 
+## 🚩Problem Statement 
 Develop a browser-based
 application or a native mobile
 application to demonstrate 
@@ -18,12 +18,24 @@ Cherry on the top is that you can mark attendance of more than one student at a 
 
 P.S. This project was built entirely during the Microsoft Engage'22 Program Timeline.
 
-### 🔗 Links for project:
+## 🔗 Links for project:
  Video link : [Youtube Link]()  
  
  Drive Link for APK : [Drive Link]()
  
  Project Presentation : [Presentation Link]()
+
+## 🚩 Features and UI: 
+Features | UI
+------------ | -------------
+
+## App Flow
+
+## WorkFlow - using Agile Methodology
+
+| Week | Task |  Remarks |
+|------|:----:|---------|
+| 1    | **Design & Setup phase**: - Finalize the Problem Statement for my project. Build the design prototype using Figma and Also started working on the App Flow |   Successfully created a problem Statement for my self and Finalize the Design Prototype and Started working on some designs.            |
 
 ## Getting Started
 
