@@ -29,9 +29,10 @@ P.S. This project was built entirely during the Microsoft Engage'22 Program Time
 Features | UI
 ------------ | -------------
 
-## App Flow
 
-## WorkFlow - using Agile Methodology
+## 🚩 App Flow
+
+## 🚩 WorkFlow - using Agile Methodology
 
 | Week | Task |  Remarks |
 |------|:----:|---------|
