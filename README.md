@@ -36,6 +36,9 @@ Features | UI
 | Week | Task |  Remarks |
 |------|:----:|---------|
 | 1    | **Design & Setup phase**: - Finalize the Problem Statement for my project. Build the design prototype using Figma and Also started working on the App Flow |   Successfully created a problem Statement for my self and Finalize the Design Prototype and Started working on some designs.            |
+| 2    | **Build & Develop Phase**: - Decide upon the Tech Stack that I want to use and also decide the Cloud services that I will be using. Start the Base project and prepare the structure for it.| Finally Decided to use Dart and Flutter as Framework and build an Android Application to Mark Attendance. Android Application was choosen beacause of the effectiveness of the application and Flutter was chosen as it's very versatile and easy to scale Framework|
+| 3    | **Develop & Test phase**: -Start building the Screens, Data Models, and Widgets for the Project. Set Up the Remote Database - Define the collections and Documents on Firebase Firestore.  | Successfully built the base of the application, defined the Data Models for Student and Class and also implemented Firebase FireStore for the Database. Completed the Collection and Documentation setup for Firestore |
+| 4    | **Test & Deploy phase**: - Set up the Azure resource and Initiated the Face API. Implemented the Face Recognition and Identification. Further implemented some features - Export to CSV, etc.| Successfully Created the Azure Resource and Implemented the Face API calls in the application inorder to facilitate the Facial Attendance, Added Export to CSV feature along with Delete class and Student|
 
 ## Getting Started
 
