@@ -18,20 +18,13 @@ class AppDrawer extends StatelessWidget {
             padding: EdgeInsets.all(20),
             alignment: Alignment.bottomLeft,
             child: Text(
-              name as String,
+              'Welcome User',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 22,
                 color: Colors.white,
               ),
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
-            onTap: () {
-              Navigator.of(context).pushNamed('/home');
-            },
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
