@@ -22,11 +22,11 @@ P.S. This project was built entirely during the Microsoft Engage'22 Program Time
 
 
 ## 🔗 Links for project:
- Video link : [Youtube Link]()  
+ Video link : [Youtube Link](https://youtu.be/LB74Clwdssc)  
  
- Drive Link for APK : [Drive Link]()
+ Drive Link for APK : [Drive Link](https://drive.google.com/drive/folders/12ID1duiuW5jMXESw1S06FS8uf2FskXfr?usp=sharing)
  
- Project Presentation : [Presentation Link]()
+ Project Presentation : [Presentation Link](https://drive.google.com/file/d/1ohMl4jOs0dyuXbPIbHhRbBH7HJGmqfwz/view?usp=sharing)
 
 ## 🚩 Features | UI and How to Use: 
 Features | UI
