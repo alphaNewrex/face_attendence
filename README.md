@@ -24,7 +24,7 @@ P.S. This project was built entirely during the Microsoft Engage'22 Program Time
 ## 🔗 Links for project:
  Video link : [Youtube Link](https://youtu.be/LB74Clwdssc)  
  
- Drive Link for APK : [Drive Link](https://drive.google.com/drive/folders/12ID1duiuW5jMXESw1S06FS8uf2FskXfr?usp=sharing)
+ Drive Link for APK : [Drive Link](https://drive.google.com/drive/folders/12ID1duiuW5jMXESw1S06FS8uf2FskXfr?usp=sharing) (To run the release version of the app please use the apk in Github Directory or the apk in the drive link.)
  
  Project Presentation : [Presentation Link](https://drive.google.com/file/d/1ohMl4jOs0dyuXbPIbHhRbBH7HJGmqfwz/view?usp=sharing)
 
