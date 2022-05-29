@@ -52,6 +52,9 @@ Suppose the Face detector does not detect a Face, or incase you entered the wron
 
 ## 🚩 App Flow
 
+![Untitled](https://user-images.githubusercontent.com/77982973/170866202-dee79993-4746-469b-8f07-fdda8503f31d.svg)
+
+
 ## 🚩 WorkFlow - using Agile Methodology
 
 | Week | Task |  Remarks |
