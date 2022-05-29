@@ -16,7 +16,10 @@ Now, you can mark attendance of you class by just one click in the Face Attendan
 Cherry on the top is that you can mark attendance of more than one student at a time (10 students maximum in one image, i.e. this is the limit given to us by Microsoft Azure Face API - Identify).
 
 
+
 P.S. This project was built entirely during the Microsoft Engage'22 Program Timeline.
+
+
 
 ## 🔗 Links for project:
  Video link : [Youtube Link]()  
@@ -28,6 +31,23 @@ P.S. This project was built entirely during the Microsoft Engage'22 Program Time
 ## 🚩 Features and UI: 
 Features | UI
 ------------ | -------------
+Sign In Screen Powered by Firebase Authentication | ![Screenshot 2022-05-29 155317](https://user-images.githubusercontent.com/77982973/170863297-5445373b-ea66-461c-a086-7cb6d394210d.png)
+Register New User on the Firebase Authetication | ![Screenshot 2022-05-29 155437](https://user-images.githubusercontent.com/77982973/170863361-44da1c90-1455-4759-ae9b-340b4d4b7e9d.png)
+Incase You Forget you password We have Forget Password feature as well | ![image](https://user-images.githubusercontent.com/77982973/170863411-b5dc14d0-60a8-4354-93bf-d32efd16f71b.png)
+Class Home Page where you can View all the classes associated with that Account | ![image](https://user-images.githubusercontent.com/77982973/170863565-a0072247-f3eb-4d1e-b6e0-bfa9be47955c.png)
+Once you click the Add Class Floating action button you will be taken to add calss screen where you can add details for your class and once everything is finished. Click on Add Class, This feature will create a `Class document` on Firestore and a `LargePersonGroup` on Azure Face. The valid name for class are all small letters with numbers, no spaces.|![image](https://user-images.githubusercontent.com/77982973/170863695-4a4341fc-401b-4ec4-a9fd-75755fcc4c23.png)
+Once you click on a Class card, you will be taken to a Course Page just like the one in Image where you will get a list of all students in class along with buttons to Add Student, Take Attendance and Export Attendance | ![image](https://user-images.githubusercontent.com/77982973/170863989-b15b70b0-2856-4baa-a827-a14989cc90cd.png)
+Export Button, Exports the chats to a CSV file format which can be used further in different applications like ERP, etc. Once file is generated it will chow a snackbar click on `Open` to open the file | ![image](https://user-images.githubusercontent.com/77982973/170864066-2483c8ff-878e-43dd-8468-5ec5755f0966.png)
+On clicking Add Student it will take up to Add student Page where you have to select a photo first. Once the Image is selected then it will show The remaining form fields. You can select the image from Gallery or Click a fresh new Image and use that.| ![image](https://user-images.githubusercontent.com/77982973/170864212-3a94524c-c0e5-41ed-9f9a-0ad9e4a8fded.png)
+If you click on take attendance on the Class Page, It will take you to a screen where you can select a photo from gallery or take one from the camera and use that for marking attendance. This uses Azure Face API's `Detect` and `Identify` calls and updates accordingy in our database.| ![image](https://user-images.githubusercontent.com/77982973/170864266-2fa7329f-5a96-4dc4-9585-eada62dc6772.png)
+Suppose the Face detector does not detect a Face, or incase you entered the wrong registration number.Well, You can edit it by click on the respective student container and `Update the details` required.If you want you can `delete the selected student` as well. This asction will delete it from the database and the Azure LargePersonGroup. |![image](https://user-images.githubusercontent.com/77982973/170864507-ff458304-7650-46f2-a4ef-3866f79ab17c.png)
+
+
+## The Confidence Report for the Images Detected in the above feature demonstration.
+![image](https://user-images.githubusercontent.com/77982973/170864381-c29a55e5-80e7-421c-b43c-49dd9adfc78e.png)
+## Exported CSV file genetrated 
+![image](https://user-images.githubusercontent.com/77982973/170864429-878de31a-df78-4ffc-929d-60d2359ced8c.png)
+
 
 
 ## 🚩 App Flow
